@@ -32,7 +32,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item updateItem(User user, Long itemId, ItemDto itemDto) {
-        getItemById(itemId);
+        Item existingItem = getItemById(itemId);
+
+        if (!existingItem.getOwner().equals(user)) {
+            throw new NotFoundException("Пользователь не является владельцем вещи!");
+        }
 
         Item item = ItemMapper.dtoToItem(itemId, user, itemDto);
 
@@ -57,7 +61,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemList.get(id);
 
         if (item == null) {
-            throw new NotFoundException("Предмет не найден!");
+            throw new NotFoundException("Вещь не найдена!");
         }
 
         return item;

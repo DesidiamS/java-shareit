@@ -40,7 +40,9 @@ public class UserServiceImpl implements UserService {
     public User updateUser(Long id, User user) {
         findById(id);
 
-        checkUserEmailDuplicate(user);
+        if (user.getEmail() != null) {
+            checkUserEmailDuplicate(user);
+        }
 
         user.setId(id);
 
@@ -58,7 +60,7 @@ public class UserServiceImpl implements UserService {
 
     private void checkUserEmailDuplicate(User user) {
         for (User existedUser : userList.values()) {
-            if (existedUser.getEmail().equals(user.getEmail())) {
+            if (existedUser.getEmail() != null && existedUser.getEmail().equals(user.getEmail())) {
                 throw new DuplicateException("Пользователь с таким Email уже существует!");
             }
         }
