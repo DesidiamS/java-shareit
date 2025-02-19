@@ -8,9 +8,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)

@@ -8,9 +8,6 @@ import ru.practicum.shareit.user.User;
 
 import java.sql.Timestamp;
 
-/**
- * TODO Sprint add-item-requests.
- */
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
