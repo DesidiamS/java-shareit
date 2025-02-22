@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -13,9 +14,12 @@ import ru.practicum.shareit.user.UserService;
 import java.util.List;
 import java.util.Objects;
 
+import static ru.practicum.shareit.Constants.USER_HEADER;
+
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
+@Slf4j
 public class ItemController {
 
     private final ItemService itemService;
@@ -23,7 +27,7 @@ public class ItemController {
 
     @GetMapping
     List<Item> getAllItems(@RequestHeader HttpHeaders headers) {
-        Long userId = Long.valueOf(Objects.requireNonNull(headers.get("X-Sharer-User-Id")).get(0));
+        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).get(0));
         User user = userService.findById(userId);
         return itemService.getAllItemsByUserId(user);
     }
@@ -36,7 +40,8 @@ public class ItemController {
     @PostMapping
     public Item createItem(@RequestBody @Valid ItemDto itemDto,
                            @RequestHeader HttpHeaders headers) {
-        Long userId = Long.valueOf(Objects.requireNonNull(headers.get("X-Sharer-User-Id")).get(0));
+        log.info("creating item with name: " + itemDto.getName());
+        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).get(0));
         User user = userService.findById(userId);
         return itemService.createItem(user, itemDto);
     }
@@ -45,13 +50,15 @@ public class ItemController {
     public Item updateItem(@PathVariable Long id,
                            @RequestBody ItemDto itemDto,
                            @RequestHeader HttpHeaders headers) {
-        Long userId = Long.valueOf(Objects.requireNonNull(headers.get("X-Sharer-User-Id")).get(0));
+        log.info("updating item with id: " + id);
+        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).get(0));
         User user = userService.findById(userId);
         return itemService.updateItem(user, id, itemDto);
     }
 
     @GetMapping("/search")
     public List<Item> itemSearch(@RequestParam String text) {
+        log.info("search item by: " + text);
         return itemService.searchItem(text);
     }
 
