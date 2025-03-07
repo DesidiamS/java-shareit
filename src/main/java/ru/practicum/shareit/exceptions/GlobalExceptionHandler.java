@@ -22,4 +22,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> userNotPresentedHandler(UserNotPresented e) {
         return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(ValidateException.class)
+    public ResponseEntity<ErrorResponse> validateExceptionHandler(ValidateException e) {
+        return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
 }

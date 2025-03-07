@@ -1,4 +1,6 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.service;
+
+import ru.practicum.shareit.user.User;
 
 public interface UserService {
 

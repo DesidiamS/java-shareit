@@ -2,83 +2,120 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.exceptions.ValidateException;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.CommentRequest;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithComment;
 import ru.practicum.shareit.item.mappers.ItemMapper;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.CommentRepository;
+import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+
+import static ru.practicum.shareit.item.mappers.CommentMapper.toCommentDto;
+import static ru.practicum.shareit.item.mappers.ItemMapper.toItemWithComment;
 
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
-    private final Map<Long, Item> itemList = new LinkedHashMap<>();
-    private Long sequence = 0L;
+
+    private final ItemRepository itemRepository;
+
+    private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public Item createItem(User user, ItemDto itemDto) {
-        sequence += 1;
 
-        Item item = ItemMapper.dtoToItem(sequence, user, itemDto);
+        Item item = ItemMapper.dtoToItem(user, itemDto);
 
-        itemList.put(sequence, item);
+        userRepository.findById(user.getId()).orElseThrow(() -> new NotFoundException("Пользователь не найден!"));
 
-        return item;
+        return itemRepository.save(item);
     }
 
     @Override
     public Item updateItem(User user, Long itemId, ItemDto itemDto) {
-        Item existingItem = getItemById(itemId);
+        Item existingItem = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Вещь не найдена!"));
 
         if (!existingItem.getOwner().equals(user)) {
             throw new NotFoundException("Пользователь не является владельцем вещи!");
         }
 
-        Item item = ItemMapper.dtoToItem(itemId, user, itemDto);
+        Item item = ItemMapper.dtoToItem(user, itemDto);
 
-        itemList.replace(itemId, item);
+        item.setId(itemId);
 
-        return getItemById(itemId);
-    }
-
-    @Override
-    public List<Item> getAllItemsByUserId(User user) {
-        List<Item> items = new LinkedList<>();
-        for (Item item : itemList.values()) {
-            if (item.getOwner().getId().equals(user.getId())) {
-                items.add(item);
-            }
-        }
-        return items;
-    }
-
-    @Override
-    public Item getItemById(Long id) {
-        Item item = itemList.get(id);
-
-        if (item == null) {
-            throw new NotFoundException("Вещь не найдена!");
-        }
+        itemRepository.patchItem(item.getName(), item.getDescription(), item.getAvailable(), item.getId());
 
         return item;
     }
 
     @Override
-    public List<Item> searchItem(String searchString) {
-        List<Item> items = new LinkedList<>();
-        if (!searchString.isEmpty()) {
-            for (Item item : itemList.values()) {
-                if ((item.getName() != null && item.getName().toLowerCase().contains(searchString.toLowerCase())
-                        || item.getDescription() != null && item.getDescription().toLowerCase()
-                        .contains(searchString.toLowerCase())) && item.getAvailable()) {
-                    items.add(item);
-                }
+    public Collection<ItemWithComment> getAllItemsByUserId(User user) {
+        Collection<ItemWithComment> result = new HashSet<>();
+        for (Item item : itemRepository.findAllByOwnerId(user.getId())) {
+            List<Comment> comments = commentRepository.findAllByItemId(item.getId());
+            Timestamp lastBooking = bookingRepository.findLastBookingByItem(item.getId());
+            Timestamp nextBooking = bookingRepository.findNextBookingByItem(item.getId());
+            result.add(toItemWithComment(item, comments, lastBooking, nextBooking));
+        }
+        return result;
+    }
+
+    @Override
+    public ItemWithComment getItemById(Long id) {
+        Item item = itemRepository.findById(id).orElseThrow(() -> new NotFoundException("Вещь не найдена!"));
+        List<Comment> comments = commentRepository.findAllByItemId(item.getId());
+        Timestamp lastBooking = bookingRepository.findLastBookingByItem(item.getId());
+        Timestamp nextBooking = bookingRepository.findNextBookingByItem(item.getId());
+        return toItemWithComment(item, comments, lastBooking, nextBooking);
+    }
+
+    @Override
+    public Collection<Item> searchItem(String searchString) {
+        if (searchString.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+        return itemRepository.findAllByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(searchString);
+    }
+
+    @Override
+    public CommentDto makeComment(CommentRequest request, Long itemId, Long userId) {
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Вещь не найдена!"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден!"));
+
+        Timestamp now = Timestamp.valueOf(LocalDate.now().atStartOfDay());
+
+        Booking booking = bookingRepository.findBookingByItem(item).orElseThrow(()
+                -> new NotFoundException("Бронирование не найдено!"));
+
+        for (Comment comment : commentRepository.findAllByItemId(itemId)) {
+            if (comment.getUser().getId().equals(userId)) {
+                throw new ValidateException("Нельзя оставить отзыв!");
             }
         }
-        return items;
+
+        if (!booking.getBooker().equals(user)) {
+            throw new ValidateException("Пользователь не брал вещь в аренду!");
+        }
+
+        Comment comment = commentRepository.save(new Comment(null, request.getText(), item, user, now));
+
+        return toCommentDto(comment);
     }
 }
