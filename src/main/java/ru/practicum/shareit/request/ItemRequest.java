@@ -1,6 +1,7 @@
 package ru.practicum.shareit.request;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,7 @@ public class ItemRequest {
 
     @Id
     Long id;
+    @Size(max = 250)
     String description;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
