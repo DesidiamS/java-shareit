@@ -5,13 +5,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.CommentRequest;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithComment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserService;
+import ru.practicum.shareit.user.service.UserService;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 
 import static ru.practicum.shareit.Constants.USER_HEADER;
@@ -26,14 +29,14 @@ public class ItemController {
     private final UserService userService;
 
     @GetMapping
-    List<Item> getAllItems(@RequestHeader HttpHeaders headers) {
+    Collection<ItemWithComment> getAllItems(@RequestHeader HttpHeaders headers) {
         Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).get(0));
         User user = userService.findById(userId);
         return itemService.getAllItemsByUserId(user);
     }
 
     @GetMapping("/{id}")
-    Item getItemById(@PathVariable Long id) {
+    ItemWithComment getItemById(@PathVariable Long id) {
         return itemService.getItemById(id);
     }
 
@@ -57,10 +60,17 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<Item> itemSearch(@RequestParam String text) {
+    public Collection<Item> itemSearch(@RequestParam String text) {
         log.info("search item by: " + text);
         return itemService.searchItem(text);
     }
 
+    @PostMapping("/{itemId}/comment")
+    public CommentDto createComment(@RequestBody CommentRequest request,
+                                    @PathVariable Long itemId,
+                                    @RequestHeader HttpHeaders headers) {
+        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).get(0));
+        return itemService.makeComment(request, itemId, userId);
+    }
 
 }

@@ -1,28 +1,26 @@
-package ru.practicum.shareit.request;
+package ru.practicum.shareit.item.dto;
 
-import jakarta.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.shareit.user.User;
 
 import java.sql.Timestamp;
 
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Entity
-@Table(name = "item_requests")
-public class ItemRequest {
+@AllArgsConstructor
+public class CommentDto {
 
-    @Id
     Long id;
     @Size(max = 250)
-    String description;
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    User requestor;
+    String text;
+    String authorName;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     Timestamp created;
 }
