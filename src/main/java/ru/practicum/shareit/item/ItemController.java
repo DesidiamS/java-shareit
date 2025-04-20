@@ -69,7 +69,7 @@ public class ItemController {
     public CommentDto createComment(@RequestBody CommentRequest request,
                                     @PathVariable Long itemId,
                                     @RequestHeader HttpHeaders headers) {
-        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).get(0));
+        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).getFirst());
         return itemService.makeComment(request, itemId, userId);
     }
 

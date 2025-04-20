@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingRequest;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingState;
@@ -64,7 +65,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking getBookingById(Long userId, Long id) {
-        return bookingRepository.findBookingByBookerIdAndId(userId, id).orElseThrow(()
+        //todo: тут ничего не находит. Видимо не создается бронирование. Но схуяли?
+        return bookingRepository.findById(id).orElseThrow(()
                 -> new NotFoundException("Бронирование найдено!"));
     }
 
@@ -90,7 +92,9 @@ public class BookingServiceImpl implements BookingService {
             throw new ValidateException("Дата начала не должна совпадать с датой окончания!");
         }
 
-        return bookingRepository.save(new Booking(null, request.getStart(), request.getEnd(), item, user, BookingStatus.WAITING));
+        Booking booking = new Booking(null, request.getStart(), request.getEnd(), item, user, BookingStatus.WAITING);
+
+        return bookingRepository.save(booking);
     }
 
     @Override

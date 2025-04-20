@@ -1,28 +1,25 @@
-package ru.practicum.shareit.request;
+package ru.practicum.shareit.request.dto;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Entity
-@Table(name = "item_requests")
-public class ItemRequest {
+@AllArgsConstructor
+@NoArgsConstructor
+public class ItemRequestWithItems {
 
-    @Id
     Long id;
     @Size(max = 250)
     String description;
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
     User requestor;
     Timestamp created;
+    Collection<Item> items;
 }

@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.shareit.request.ItemRequest;
 
 @Getter
 @Setter
@@ -24,5 +23,5 @@ public class ItemDto {
     String description;
     @NotNull
     Boolean available;
-    ItemRequest request;
+    Long requestId;
 }

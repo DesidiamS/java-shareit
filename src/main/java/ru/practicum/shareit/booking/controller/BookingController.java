@@ -41,14 +41,14 @@ public class BookingController {
     @GetMapping("/{bookingId}")
     public Booking getBookingById(@RequestHeader HttpHeaders headers,
                                   @PathVariable Long bookingId) {
-        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).get(0));
+        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).getFirst());
         return bookingService.getBookingById(userId, bookingId);
     }
 
     @PostMapping
     public Booking createBooking(@RequestHeader HttpHeaders headers,
                                  @RequestBody BookingRequest request) {
-        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).get(0));
+        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).getFirst());
         return bookingService.createBooking(userId, request);
     }
 

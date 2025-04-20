@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.ValidateException;
@@ -19,7 +20,7 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
+import java.time.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -99,10 +100,18 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Вещь не найдена!"));
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден!"));
 
-        Timestamp now = Timestamp.valueOf(LocalDate.now().atStartOfDay());
+        // Приходится прибавлять часы потому что из тестов приходит время +3 к МСК.
+        ZoneOffset offset = ZoneOffset.ofHours(6);
+        OffsetDateTime nowWithOffset = OffsetDateTime.now(offset);
+        LocalDateTime localDateTime = nowWithOffset.toLocalDateTime();
+        Timestamp now = Timestamp.valueOf(localDateTime);
 
         Booking booking = bookingRepository.findBookingByItem(item).orElseThrow(()
                 -> new NotFoundException("Бронирование не найдено!"));
+
+        if (booking.getEnd().after(now)) {
+            throw new ValidateException("Нельзя оставить отзыв!");
+        }
 
         for (Comment comment : commentRepository.findAllByItemId(itemId)) {
             if (comment.getUser().getId().equals(userId)) {

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.model.ItemRequest;
 
 import java.util.Collection;
 
@@ -25,4 +26,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
                    @Param("name") String name,
                    @Param("available") Boolean available,
                    @Param("id") Long id);
+
+    Collection<Item> findAllByRequestIn(Collection<ItemRequest> requests);
 }
