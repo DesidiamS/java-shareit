@@ -30,7 +30,7 @@ public class ItemController {
 
     @GetMapping
     Collection<ItemWithComment> getAllItems(@RequestHeader HttpHeaders headers) {
-        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).get(0));
+        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).getFirst());
         User user = userService.findById(userId);
         return itemService.getAllItemsByUserId(user);
     }
@@ -44,7 +44,7 @@ public class ItemController {
     public Item createItem(@RequestBody @Valid ItemDto itemDto,
                            @RequestHeader HttpHeaders headers) {
         log.info("creating item with name: " + itemDto.getName());
-        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).get(0));
+        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).getFirst());
         User user = userService.findById(userId);
         return itemService.createItem(user, itemDto);
     }
@@ -54,7 +54,7 @@ public class ItemController {
                            @RequestBody ItemDto itemDto,
                            @RequestHeader HttpHeaders headers) {
         log.info("updating item with id: " + id);
-        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).get(0));
+        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).getFirst());
         User user = userService.findById(userId);
         return itemService.updateItem(user, id, itemDto);
     }

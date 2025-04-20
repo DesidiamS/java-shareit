@@ -5,10 +5,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.booking.dto.BookingRequest;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.model.BookingStatus;
-import ru.practicum.shareit.booking.dto.BookingRequest;
 import ru.practicum.shareit.booking.service.BookingService;
 
 import java.util.List;
@@ -27,14 +27,14 @@ public class BookingController {
     @GetMapping
     public List<Booking> getBookingByBooker(@RequestHeader HttpHeaders headers,
                                             @RequestParam @Nullable BookingState state) {
-        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).get(0));
+        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).getFirst());
         return bookingService.getBookingByBooker(userId, state);
     }
 
     @GetMapping("/owner")
     public List<Booking> getBookingByOwner(@RequestHeader HttpHeaders headers,
                                            @RequestParam @Nullable BookingState state) {
-        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).get(0));
+        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).getFirst());
         return bookingService.getBookingByOwner(userId, state);
     }
 
@@ -56,7 +56,7 @@ public class BookingController {
     public Booking changeBookingStatus(@RequestHeader HttpHeaders headers,
                                        @PathVariable Long bookingId,
                                        @RequestParam Boolean approved) {
-        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).get(0));
+        Long userId = Long.valueOf(Objects.requireNonNull(headers.get(USER_HEADER)).getFirst());
         BookingStatus status;
         if (approved) {
             status = BookingStatus.APPROVED;
