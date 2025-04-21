@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentRequest;
-import ru.practicum.shareit.item.dto.Item;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import static ru.practicum.shareit.Constants.USER_HEADER;
