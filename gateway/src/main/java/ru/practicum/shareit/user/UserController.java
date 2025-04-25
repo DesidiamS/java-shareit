@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.exceptions.ValidateException;
 
 @RestController
 @RequestMapping(path = "/users")
@@ -22,6 +23,9 @@ public class UserController {
     @PostMapping
     public ResponseEntity<Object> createUser(@RequestBody @Valid User user) {
         log.info("creating user with email: {}", user.getEmail());
+        if (user.getEmail() == null) {
+            throw new ValidateException("email is required");
+        }
         return userClient.createUser(user);
     }
 

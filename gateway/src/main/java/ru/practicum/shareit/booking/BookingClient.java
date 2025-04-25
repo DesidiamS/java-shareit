@@ -81,6 +81,6 @@ public class BookingClient extends BaseClient {
         Map<String, Object> parameters = Map.of(
                 "state", state
         );
-        return get("/owner" + "?approved={approved}", ownerId, parameters);
+        return get("/owner", ownerId, parameters);
     }
 }

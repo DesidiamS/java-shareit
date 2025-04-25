@@ -70,20 +70,6 @@ public class ItemRequestControllerTest {
     }
 
     @Test
-    public void whenInvalidRequestBodyForCreateItemRequestThenReturnBadRequest() throws Exception {
-        ItemRequest itemRequest = new ItemRequest();
-        String jsonRequestBody = objectMapper.writeValueAsString(itemRequest);
-
-        mvc.perform(post("/requests")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header(USER_HEADER, 1L)
-                        .content(jsonRequestBody))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     public void whenMissingUserHeaderForCreateItemRequestThenReturnBadRequest() throws Exception {
         ItemRequest itemRequest = new ItemRequest();
         String jsonRequestBody = objectMapper.writeValueAsString(itemRequest);

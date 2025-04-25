@@ -1,6 +1,5 @@
 package ru.practicum.shareit.request;
 
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -18,7 +17,6 @@ public class ItemRequest {
     Long id;
     @Size(max = 250)
     String description;
-    @NotNull
     User requestor;
     Timestamp created;
 }
