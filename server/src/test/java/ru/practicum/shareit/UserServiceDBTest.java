@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.notNullValue;
 @EnableJpaRepositories
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @TestPropertySource(properties = {"spring.datasource.url=jdbc:postgresql://localhost:5432/shareit",
-        "spring.datasource.username=postgres", "spring.datasource.password=m"})
+        "spring.datasource.username=postgres", "spring.datasource.password=postgres"})
 @SpringJUnitConfig({UserRepository.class, UserServiceImpl.class, ShareItServer.class})
 public class UserServiceDBTest {
 

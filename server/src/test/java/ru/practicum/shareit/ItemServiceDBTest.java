@@ -29,7 +29,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 @EnableJpaRepositories
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @SpringBootTest(properties = {"spring.datasource.url=jdbc:postgresql://localhost:5432/shareit",
-        "spring.datasource.username=postgres", "spring.datasource.password=m"})
+        "spring.datasource.username=postgres", "spring.datasource.password=postgres"})
 public class ItemServiceDBTest {
 
     private final ItemServiceImpl itemService;

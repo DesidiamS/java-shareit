@@ -25,7 +25,7 @@ import static org.hamcrest.Matchers.notNullValue;
 @EnableJpaRepositories
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @SpringBootTest(properties = {"spring.datasource.url=jdbc:postgresql://localhost:5432/shareit",
-        "spring.datasource.username=postgres", "spring.datasource.password=m"})
+        "spring.datasource.username=postgres", "spring.datasource.password=postgres"})
 public class BookingServiceDBTest {
 
     private final BookingServiceImpl bookingService;
