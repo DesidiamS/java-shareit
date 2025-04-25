@@ -18,11 +18,14 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemWithComment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
+import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -35,6 +38,10 @@ public class ItemControllerTest {
 
     @Mock
     private ItemServiceImpl mockItemService;
+
+    @Mock
+    private UserServiceImpl mockUserService;
+
     private MockMvc mvc;
 
     @InjectMocks
@@ -83,6 +90,10 @@ public class ItemControllerTest {
 
         Mockito.when(mockItemService.createItem(any(), any()))
                 .thenReturn(new Item());
+
+        Mockito
+                .when(mockUserService.findById(any()))
+                        .thenReturn(new User());
 
         mvc.perform(post("/items")
                         .characterEncoding(StandardCharsets.UTF_8)
