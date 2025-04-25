@@ -7,6 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingRequest;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.item.dto.CommentRequest;
 import ru.practicum.shareit.item.dto.ItemWithComment;
@@ -73,9 +75,11 @@ public class ItemServiceDBTest {
         commentRequest.setText("test_comment");
 
         BookingRequest bookingRequest = new BookingRequest(item.getId(), Timestamp.valueOf(LocalDateTime.now()),
-                Timestamp.valueOf(LocalDateTime.now()));
+                Timestamp.valueOf(LocalDateTime.now().minusHours(1)));
 
-        bookingService.createBooking(user.getId(), bookingRequest);
+        Booking booking = bookingService.createBooking(user.getId(), bookingRequest);
+
+        bookingService.updateBookingStatus(owner.getId(), booking.getId(), BookingStatus.APPROVED);
 
         itemService.makeComment(commentRequest, item.getId(), user.getId());
 
