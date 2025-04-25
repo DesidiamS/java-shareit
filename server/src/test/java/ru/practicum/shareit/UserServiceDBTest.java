@@ -3,6 +3,7 @@ package ru.practicum.shareit;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -18,8 +19,8 @@ import static org.hamcrest.Matchers.notNullValue;
 @Transactional
 @EnableJpaRepositories
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@TestPropertySource(properties = {"spring.datasource.url=jdbc:postgresql://localhost:5434/shareit",
-        "spring.datasource.username=postgres", "spring.datasource.password=m"})
+@SpringBootTest(properties = {"spring.datasource.url=jdbc:h2:mem:shareit",
+        "spring.datasource.username=sa", "spring.datasource.password=sa"})
 @SpringJUnitConfig({UserRepository.class, UserServiceImpl.class, ShareItServer.class})
 public class UserServiceDBTest {
 
