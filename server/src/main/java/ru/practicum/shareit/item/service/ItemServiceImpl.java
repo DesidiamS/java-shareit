@@ -2,7 +2,6 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.ValidateException;
@@ -101,27 +100,8 @@ public class ItemServiceImpl implements ItemService {
 
         Timestamp now = Timestamp.valueOf(LocalDateTime.now());
 
-        // Приходится прибавлять часы потому что из тестов приходит время +3 к МСК.
-        /*ZoneOffset offset = ZoneOffset.ofHours(6);
-        OffsetDateTime nowWithOffset = OffsetDateTime.now(offset);
-        LocalDateTime localDateTime = nowWithOffset.toLocalDateTime();
-        Timestamp now = Timestamp.valueOf(localDateTime); проверка*/
-
-        Booking booking = bookingRepository.findBookingByItem(item).orElseThrow(()
-                -> new NotFoundException("Бронирование не найдено!"));
-
-        if (booking.getEnd().after(now)) {
+        if (!bookingRepository.isUserBookedItem(itemId, userId, now)) {
             throw new ValidateException("Нельзя оставить отзыв!");
-        }
-
-        /*for (Comment comment : commentRepository.findAllByItemId(itemId)) {
-            if (comment.getUser().getId().equals(userId)) {
-                throw new ValidateException("Нельзя оставить отзыв!");
-            }
-        }*/
-
-        if (!booking.getBooker().equals(user)) {
-            throw new ValidateException("Пользователь не брал вещь в аренду!");
         }
 
         Comment comment = commentRepository.save(new Comment(null, request.getText(), item, user, now));

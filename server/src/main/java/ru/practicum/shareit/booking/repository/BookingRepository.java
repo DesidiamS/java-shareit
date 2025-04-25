@@ -6,11 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
-import ru.practicum.shareit.item.model.Item;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -37,11 +35,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findBookingsByItemOwnerIdOrderByIdDesc(Long ownerId);
 
-    Optional<Booking> findBookingByItem(Item item);
-
     @Query("SELECT MAX(b.end) FROM Booking b WHERE b.item.id = ?1 AND b.end < CURRENT_TIMESTAMP")
     Timestamp findLastBookingByItem(Long itemId);
 
     @Query("SELECT min(b.start) FROM Booking b WHERE b.item.id = ?1 AND b.start < CURRENT_TIMESTAMP")
     Timestamp findNextBookingByItem(Long itemId);
+
+    @Query("SELECT count(b) > 0 FROM Booking b WHERE b.item.id = ?1 AND b.booker.id = ?2 AND b.end < ?3 AND b.status = 'APPROVED'")
+    boolean isUserBookedItem(Long itemId, Long userId, Timestamp now);
 }
