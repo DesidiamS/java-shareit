@@ -20,8 +20,6 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -101,13 +99,13 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Вещь не найдена!"));
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден!"));
 
-//        Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+        Timestamp now = Timestamp.valueOf(LocalDateTime.now());
 
         // Приходится прибавлять часы потому что из тестов приходит время +3 к МСК.
-        ZoneOffset offset = ZoneOffset.ofHours(3);
+        /*ZoneOffset offset = ZoneOffset.ofHours(6);
         OffsetDateTime nowWithOffset = OffsetDateTime.now(offset);
         LocalDateTime localDateTime = nowWithOffset.toLocalDateTime();
-        Timestamp now = Timestamp.valueOf(localDateTime);
+        Timestamp now = Timestamp.valueOf(localDateTime); проверка*/
 
         Booking booking = bookingRepository.findBookingByItem(item).orElseThrow(()
                 -> new NotFoundException("Бронирование не найдено!"));
