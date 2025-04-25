@@ -9,7 +9,10 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>server</artifactId>
+    <name>ShareIt Server</name>
+
+    <artifactId>shareit-server</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>23</maven.compiler.source>
@@ -17,4 +20,18 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+
+    <profiles>
+        <profile>
+            <id>coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
