@@ -18,7 +18,7 @@ public class ItemRequestMapper {
                 itemRequest.getId(),
                 itemRequest.getDescription(),
                 itemRequest.getRequestor(),
-                itemRequest.getCreated()
-                , items);
+                itemRequest.getCreated(),
+                items);
     }
 }
