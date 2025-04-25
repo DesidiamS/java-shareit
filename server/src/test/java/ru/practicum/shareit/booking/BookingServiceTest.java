@@ -1,4 +1,4 @@
-package ru.practicum.shareit;
+package ru.practicum.shareit.booking;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -226,6 +226,7 @@ public class BookingServiceTest {
         assertThat(result, notNullValue());
         assertThat(result.size(), equalTo(1));
     }
+
 
     @Test
     void whenGetBookingByOwnerWithNonExistentUserThenThrowException() {

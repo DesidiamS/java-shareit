@@ -1,4 +1,4 @@
-package ru.practicum.shareit;
+package ru.practicum.shareit.request;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,6 +47,8 @@ public class ItemRequestServiceTest {
 
     @Test
     public void whenCreateItemRequestThenReturnItemRequest() {
+        ItemRequestDto itemRequestDto = new ItemRequestDto();
+        itemRequestDto.setDescription("test description");
         Mockito
                 .when(mockUserService.findById(Mockito.anyLong()))
                 .thenReturn(Mockito.mock(User.class));
@@ -57,7 +59,7 @@ public class ItemRequestServiceTest {
                 .when(mockItemRequestRepository.save(Mockito.any(ItemRequest.class)))
                 .thenReturn(expectedItemRequest);
 
-        ItemRequest itemRequest = itemRequestService.create(1L, new ItemRequestDto());
+        ItemRequest itemRequest = itemRequestService.create(1L, itemRequestDto);
 
         assertThat(itemRequest, notNullValue());
         assertThat(itemRequest.getDescription(), equalTo("test description"));
@@ -114,7 +116,10 @@ public class ItemRequestServiceTest {
     public void whenGetByIdThenReturnMappedRequest() {
         Long requestId = 1L;
         User user = new User(1L, "John", "john@email.ry");
-        ItemRequest request = new ItemRequest(1L, "description", user, Timestamp.valueOf(LocalDateTime.now()));
+        ItemRequest request = new ItemRequest(1L);
+        request.setDescription("description");
+        request.setCreated(Timestamp.valueOf(LocalDateTime.now()));
+        request.setRequestor(user);
         Item item = new Item("test", "test", true, user, request);
 
         Mockito.when(mockItemRequestRepository.findById(requestId)).thenReturn(Optional.of(request));
