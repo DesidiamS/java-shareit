@@ -114,11 +114,11 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidateException("Нельзя оставить отзыв!");
         }
 
-        for (Comment comment : commentRepository.findAllByItemId(itemId)) {
+        /*for (Comment comment : commentRepository.findAllByItemId(itemId)) {
             if (comment.getUser().getId().equals(userId)) {
                 throw new ValidateException("Нельзя оставить отзыв!");
             }
-        }
+        }*/
 
         if (!booking.getBooker().equals(user)) {
             throw new ValidateException("Пользователь не брал вещь в аренду!");
